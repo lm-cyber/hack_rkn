@@ -1,0 +1,1 @@
+from .image_work import image_router
