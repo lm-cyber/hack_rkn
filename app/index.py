@@ -22,16 +22,13 @@ async def get_minio_client():
 
 async def ensure_bucket_exists(client):
     try:
-        # Check if the bucket exists by trying to list buckets
         response = await client.list_buckets()
         bucket_names = [bucket["Name"] for bucket in response["Buckets"]]
         
         if MINIO_BUCKET_NAME not in bucket_names:
-            # Create the bucket if it doesn't exist
             await client.create_bucket(Bucket=MINIO_BUCKET_NAME)
             print(f"Bucket {MINIO_BUCKET_NAME} created.")
         else:
             print(f"Bucket {MINIO_BUCKET_NAME} already exists.")
     except ClientError as e:
-        # Handle other exceptions if needed
         print(f"An error occurred: {e}")

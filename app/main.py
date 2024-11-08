@@ -7,7 +7,6 @@ app = FastAPI()
 
 @app.on_event("startup")
 async def startup_event():
-    # Add a delay to ensure the database is ready
     await asyncio.sleep(2)
     await init_db()
 

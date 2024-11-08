@@ -1,6 +1,7 @@
-
 import asyncpg
 from db import DATABASE_URL
+
+
 async def init_db():
     #add enum class 
     conn = await asyncpg.connect(DATABASE_URL)
