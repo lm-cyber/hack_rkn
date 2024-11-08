@@ -9,7 +9,8 @@ async def init_db():
             id SERIAL PRIMARY KEY,
             filename TEXT NOT NULL,
             minio_path TEXT NOT NULL,
-            content_type TEXT NOT NULL
+            content_type TEXT NOT NULL,
+            class_id INTEGER NOT NULL
         );
     """)
     await conn.close()
