@@ -6,7 +6,7 @@ from index import get_minio_client, ensure_bucket_exists
 from fastapi.responses import StreamingResponse
 import io
 image_router = APIRouter()
-
+import random
 
 
 @image_router.post("/images/")
@@ -30,20 +30,22 @@ async def upload_image(file: UploadFile = File(...)):
 
         # Store metadata in PostgreSQL
         try:
+            class_id = random.randint(0,9)
             image_id = await db.fetchval(
                 """
-                INSERT INTO images (filename, minio_path, content_type)
-                VALUES ($1, $2, $3)
+                INSERT INTO images (filename, minio_path, content_type, class_id)
+                VALUES ($1, $2, $3, $4)
                 RETURNING id
                 """,
                 file.filename,
                 minio_path,
-                file.content_type
+                file.content_type,
+                class_id# model class TODO!!!!!!!!!!!!!!!!!!!!!!!!!!
             )
         finally:
             await db.close()
 
-        return {"id": image_id, "filename": file.filename, "path": minio_path}
+        return {"id": image_id, "filename": file.filename, "path": minio_path, "class_id": class_id}
 
 @image_router.get("/images/{image_id}")
 async def get_image(image_id: int):
