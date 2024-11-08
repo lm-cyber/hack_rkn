@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "hack"
+version = "0.1.0"
+description = ""
+authors = [" Nasibullin Alan Maratovich <alan.nasibyllin@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.4"
+pedantic = "^2.1.6"
+uvicorn = "^0.32.0"
+psycopg2-binary = "^2.9.10"
+asyncpg = "^0.30.0"
+aiobotocore = "^2.15.2"
+python-multipart = "^0.0.17"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
