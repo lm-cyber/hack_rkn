@@ -1,7 +1,7 @@
 import asyncio
 from fastapi import FastAPI
 from routers import image_router
-from model import init_db
+from model import init_db,init_classes
 from routers import search_router, search_content_router
 app = FastAPI()
 
@@ -10,6 +10,7 @@ async def startup_event():
     # Add a delay to ensure the database is ready
     await asyncio.sleep(2)
     await init_db()
+    await init_classes("classes.json")
 
 
 app.include_router(image_router, prefix="/api/image_serv",tags=["image_serv"])
