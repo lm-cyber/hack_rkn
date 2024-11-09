@@ -27,7 +27,7 @@ jobs:
           password: ${{ secrets.DOCKER_TOKEN }}
 
       # Step 4: Build Docker image
-     - name: Build and Push Docker Compose
-      run: |
-        docker-compose -f docker-compose.yaml build --no-cache
-        docker-compose -f docker-compose.yaml push
+      - name: Build and Push Docker Compose
+        run: |
+          docker-compose -f docker-compose.yaml build --no-cache
+          docker-compose -f docker-compose.yaml push
