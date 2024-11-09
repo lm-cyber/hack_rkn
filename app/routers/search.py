@@ -46,3 +46,20 @@ async def get_indexes_by_class(
 
         finally:
             await db.close()
+
+
+@search_router.get("/search_class/")
+async def get_indexes_by_class(
+      class_name: str
+    ):
+   
+    db = await get_db()
+    result = await db.fetch("""
+    SELECT images.id, images.probs
+    FROM images
+    JOIN classes ON images.class_id = classes.id
+    WHERE classes.name = $1
+    ORDER BY images.probs DESC;
+    """ , class_name)
+
+    return [dict(row) for row in result]
