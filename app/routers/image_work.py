@@ -41,11 +41,10 @@ async def upload_image(file: UploadFile = File(...),page_url: Union[str, None] =
                     content_type,
                     class_id,
                     page_url,
-                    predict_prob,
                     embedding,
                     probs
                 )
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                VALUES ($1, $2, $3, $4, $5, $6, $7)
                 RETURNING id
                 """,
                 file.filename,
@@ -53,7 +52,6 @@ async def upload_image(file: UploadFile = File(...),page_url: Union[str, None] =
                 file.content_type,
                 result['class'],# model class TODO!!!!!!!!!!!!!!!!!!!!!!!!!!
                 page_url,
-                str(result['predict_prob']),
                 str(result['embedding']),
                 result['probs_class']
                 

@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS images (
     page_url TEXT,
     probs FLOAT NOT NULL,
     embedding VECTOR(3) NOT NULL, 
-    predict_prob VECTOR(3) NOT NULL,
     FOREIGN KEY (class_id) REFERENCES classes (id)
 );
+CREATE INDEX ON images USING hnsw (embedding vector_cosine_ops);
+CREATE INDEX ON images USING hnsw (embedding vector_l1_ops);
+CREATE INDEX ON images USING hnsw (embedding vector_l2_ops);

@@ -12,11 +12,11 @@ from typing import Literal
 @search_router.post("/search/")
 async def get_indexes_by_class(
     file: UploadFile = File(...),
-    search_by:Literal["class","one_shot_proba","one_shot_embedding"] = "class",
+    search_by:Literal["class","one_shot_embedding"] = "class",
     distance_type:Literal["cosine","euclidean","manhattan"] = "cosine"
     ):
     """
-    search_by: "class","one_shot_proba","one_shot_embedding"
+    search_by: "class","one_shot_embedding"
     distance_type: "cosine","euclidean","manhattan" distance not in class search
     """
     db = await get_db()
@@ -32,10 +32,6 @@ async def get_indexes_by_class(
             if search_by == "class":
                 class_id = classificator_instance(file)
                 images = await db.fetchrow("SELECT id FROM images WHERE class_id = $1", class_id)
-            elif search_by == "one_shot_proba":
-                probs = classificator_instance.predict_probs(file)
-                images = await db.execute(
-                    """SELECT id, 1 - (probs <-> '""" + str(probs) + """'::vector(3)) AS cosine_similarity_embs FROM images order by 2 desc""")
             elif search_by == "one_shot_embedding":
                 
                 embedding = classificator_instance.predict_embedding(file)

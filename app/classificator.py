@@ -24,14 +24,10 @@ class Classificator:
     def predict_embedding(self, image):
         return np.random.rand(3).astype(np.float32).tolist()
     
-    def predict_probs(self, image):
-        probs= np.random.rand(3)
-        return (np.exp(probs) / np.sum(np.exp(probs), axis=0)).astype(np.float32).tolist()
-
+    
     def predict_result(self, image):
         return {
             "class": random.randint(0, 9),
-            "predict_prob": self.predict_probs(image),
             "probs_class": self.predict_proba_class(image),
             "embedding": self.predict_embedding(image)
         }
