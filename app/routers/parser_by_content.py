@@ -15,7 +15,6 @@ from fastapi.routing import APIRouter
 import re
 
 def sanitize_filename(filename: str) -> str:
-    # Remove any characters that MinIO doesn't accept
     sanitized = re.sub(r'[^a-zA-Z0-9_\-\.]', '_', filename)
     return sanitized
 
@@ -26,14 +25,13 @@ def generate_unique_filename(filename: str) -> str:
     return f"{uuid.uuid4().hex}.{extension}"
 search_content_router = APIRouter()
 
-# Function to fetch image from URL and create a file-like object
 async def fetch_image_as_file(url: str):
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
             if response.status == 200:
-                content_type = response.headers.get('Content-Type', '')  # Get the content type from the response header
+                content_type = response.headers.get('Content-Type', '')  
                 image_bytes = await response.read()
-                return io.BytesIO(image_bytes), content_type  # Return the image and content type
+                return io.BytesIO(image_bytes), content_type  
             else:
                 raise HTTPException(status_code=404, detail="Image not found")
 
@@ -51,15 +49,14 @@ async def upload_image(file: UploadFile, content_type: str, page_url: Union[str,
                 Bucket="images",
                 Key=minio_path,
                 Body=file.file,
-                ContentType=content_type  # Pass the content type here
+                ContentType=content_type 
             )
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"MinIO upload error: {e}")
 
-        # Store metadata in PostgreSQL
-        try:
-            result: dict = classificator_instance.predict_result(file)  # model class TODO
 
+        try:
+            result: dict = classificator_instance.predict_result(file)  
             image_id = await db.fetchval(
                 """
                 INSERT INTO images (
@@ -90,7 +87,7 @@ async def upload_image(file: UploadFile, content_type: str, page_url: Union[str,
             "id": image_id,
             "filename": file.filename,
             "path": minio_path,
-            **result
+            "class" :result['class']
         }
 
 
@@ -127,9 +124,20 @@ async def get_indexes_by_class(text: str):
                 upload_file = UploadFile(filename=img, file=image_file)
                 
                 # Upload the image with the correct content type
-                reuslt.append(await upload_image(upload_file, content_type, url),url)
+                reuslt.append(await upload_image(upload_file, content_type, url))
             except Exception as e:
                 # Handle any error while fetching or uploading the image
                 print(f"Error processing image {img} from {url}: {e}")
 
     return reuslt
+
+
+
+'''
+comand 
+
+
+dir/[main.hash.js css.hash.css hstml.html]
+
+
+'''

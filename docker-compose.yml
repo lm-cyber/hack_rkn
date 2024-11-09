@@ -40,6 +40,19 @@ services:
     ports:
       - "9000:9000"
       - "9001:9001"
+  
+  
+  # nginx:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: nginx
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - web
+
+
 
 volumes:
   postgres_data:
