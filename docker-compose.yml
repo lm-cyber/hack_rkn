@@ -12,7 +12,7 @@ services:
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=minioadmin
       - MINIO_BUCKET_NAME=images
-
+    image: lmcyber470/hack_rkn_app:latest
     depends_on:
       - db
       - minio
