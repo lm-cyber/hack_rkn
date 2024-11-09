@@ -31,20 +31,18 @@ async def get_indexes_by_class(
 
             if search_by == "class":
                 class_id = classificator_instance(file)
-                images = await db.fetchrow("SELECT id FROM images WHERE class_id = $1", class_id)
+                images = await db.fetch("SELECT id , probs FROM images WHERE class_id = $1 order by 2 desc" , class_id)
             elif search_by == "one_shot_embedding":
                 
                 embedding = classificator_instance.predict_embedding(file)
-                images = await db.fetchrow(
+                images = await db.fetch(
                     f"""SELECT id, 1 - (embedding {operator} '""" + str(embedding) + """'::vector(3)) AS cosine_similarity_embs FROM images order by 2 desc""")
             if images is None:
                 raise HTTPException(status_code=404, detail="Image not found")
             
             # Retrieve file from MinIO
            
-            return {
-                "images_id": images,
-            }
+            return [dict(row) for row in images]
 
         finally:
             await db.close()
