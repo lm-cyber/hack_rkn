@@ -1,1 +1,15 @@
 venv
+.ipynb_checkpoints/
+__pycache__/
+app/.ipynb_checkpoints/
+app/__pycache__/
+resclassifier/
+vit_overfit_last_results/
+vit_overfit_results/
+vit_v1_results/
+vit_v2_results/
+vit_v3_results/
+vit_v4.onnx
+vit_v4_5.onnx
+vit_v4_results/
+vit_v5_results/
