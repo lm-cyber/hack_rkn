@@ -15,7 +15,6 @@ from fastapi.routing import APIRouter
 import re
 from playwright.async_api import async_playwright
 from bs4 import BeautifulSoup
-
 import asyncio
 from playwright.async_api import async_playwright
 from bs4 import BeautifulSoup
