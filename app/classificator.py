@@ -4,7 +4,7 @@
 
 # import torch  
 #import onnxruntime as ort 
-
+import numpy as np
 import random
 
 
@@ -16,7 +16,21 @@ class Classificator:
         return random.randint(0, 9)
 
     
-    def batch_classificator(self, images):
-        pass
+    def predict_proba_class(self, image):
+        return random.randint(0, 100)/100
+    
+    def predict(self, image):
+        return random.randint(0, 9)
+    def predict_embedding(self, image):
+        return np.random.rand(3).astype(np.float32).tolist()
+    
+    
+    def predict_result(self, image):
+        return {
+            "class": random.randint(0, 9),
+            "probs_class": self.predict_proba_class(image),
+            "embedding": self.predict_embedding(image)
+        }
+
 
 classificator_instance = Classificator()
