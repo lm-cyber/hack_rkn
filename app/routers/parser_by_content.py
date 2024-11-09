@@ -13,6 +13,12 @@ from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from fastapi.routing import APIRouter
 import re
+from playwright.async_api import async_playwright
+from bs4 import BeautifulSoup
+
+import asyncio
+from playwright.async_api import async_playwright
+from bs4 import BeautifulSoup
 
 def sanitize_filename(filename: str) -> str:
     sanitized = re.sub(r'[^a-zA-Z0-9_\-\.]', '_', filename)
@@ -91,20 +97,27 @@ async def upload_image(file: UploadFile, content_type: str, page_url: Union[str,
         }
 
 
+
+
 async def fetch_images(url: str):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
-            if response.status == 200:
-                html = await response.text()
-                soup = BeautifulSoup(html, 'html.parser')
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)  # Headless mode
+        page = await browser.new_page()
+        
+        await page.goto(url)
+        await page.wait_for_load_state('networkidle')  # Wait for network activity to idle
 
-                img_tags = soup.find_all('img')
+        # Get page content after JavaScript execution
+        html = await page.content()
+        soup = BeautifulSoup(html, 'html.parser')
 
-                img_urls = [urljoin(url, img['src']) for img in img_tags if 'src' in img.attrs]
+        # Example: Extract all image URLs
+        img_tags = soup.find_all('img')
+        img_urls = [img['src'] for img in img_tags if img.get('src')]
 
-                return img_urls
-            else:
-                return []
+        await browser.close()
+        return img_urls
+
 
 
 @search_content_router.post("/pars/")
