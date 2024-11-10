@@ -240,9 +240,8 @@ class ResClassifier(AnyClassifier):
 
 
 class ClassificatorONNX:
-    def __init__(self, model_path: str, device="cpu"):
-        self.device = device
-        self.session = ort.InferenceSession(model_path)
+    def __init__(self, model_path: str, device = "cpu"):
+        self.session = ort.InferenceSession(model_path, providers = ["CUDAExecutionProvider" if device == "cuda" else "CPUExecutionProvider"])
 
         self.image_processor = tv.transforms.Compose(
             [
@@ -274,7 +273,7 @@ class ClassificatorONNX:
     def predict_embedding(self, image: Image.Image) -> np.ndarray:
         processed_image = self._transform(image)
         outputs = self.session.run(None, {"pixel_values": processed_image})
-        embedding = outputs[1][:, 0, :]
+        embedding = outputs[0][0]
         return embedding.squeeze()
 
     def predict_result(self, image: Image.Image) -> Dict[str, np.ndarray]:

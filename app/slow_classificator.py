@@ -233,11 +233,12 @@ class ResClassifier(AnyClassifier):
 
 
 class Classificator:
-    def __init__(self, classifier: AnyClassifier, device="cpu"):
-        self.model = classifier.model
+    def __init__(self, model, image_processor, device="cpu"):
+        self.model = model
         self.model.to(device)
         self.model.eval()
-        self.image_processor = classifier.image_processor
+        self.device = device
+        self.image_processor = image_processor
 
     def _transform(self, image: Image.Image):
         return self.image_processor(image, return_tensors="pt")["pixel_values"].squeeze(0)
@@ -246,7 +247,7 @@ class Classificator:
         processed_image = self._transform(image).unsqueeze(0)
 
         with torch.inference_mode():
-            outputs = self.model(processed_image).logits
+            outputs = self.model(processed_image.to(self.device)).logits
             probabilities = torch.nn.functional.softmax(outputs, dim=1)
             predicted_class = probabilities.argmax(dim=1).item()
 
@@ -259,7 +260,8 @@ class Classificator:
         processed_image = self._transform(image).unsqueeze(0)
 
         with torch.inference_mode():
-            outputs = self.model.vit(processed_image)
+            
+            outputs = self.model.vit(processed_image.to(self.device))
 
         return outputs.last_hidden_state[:, 0].squeeze()
 
