@@ -22,6 +22,7 @@ async def get_indexes_by_class(
     distance_type: "cosine","euclidean","manhattan" distance not in class search
     """
     db = await get_db()
+    print(file)
     im = Image.open(file.file)
     im = im.convert("RGB")                       
     async with await get_minio_client() as minio_client:
