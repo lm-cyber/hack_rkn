@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "gradio "
+version = "0.1.0"
+description = ""
+authors = [" Nasibullin Alan Maratovich <alan.nasibyllin@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+gradio = "^5.5.0"
+opencv-python = "^4.10.0.84"
+numpy = "^2.1.3"
+matplotlib = "^3.9.2"
+pillow = "^11.0.0"
+pytesseract = "^0.3.13"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
