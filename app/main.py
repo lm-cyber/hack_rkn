@@ -16,10 +16,10 @@ async def startup_event():
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # remove this if you want to disable CORS
+    allow_origins=["*"],  
     allow_credentials=True,
-    allow_methods=["*"],  # remove this if you want to disable CORS
-    allow_headers=["*"],  # remove this if you want to disable CORS
+    allow_methods=["*"],  
+    allow_headers=["*"],  
 )
 
 app.include_router(image_router, prefix="/api/image_serv",tags=["image_serv"])

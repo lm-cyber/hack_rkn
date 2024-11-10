@@ -41,7 +41,11 @@ RUN poetry config virtualenvs.create false \
 # Install Playwright and its browsers
 RUN pip install playwright \
  && playwright install --with-deps
+COPY download_script.py .
 
+ # Set up the default command to run your Python script
+RUN ["python", "download_script.py"]
+ 
 # Copy the app code after installing dependencies to optimize caching
 COPY . .
 

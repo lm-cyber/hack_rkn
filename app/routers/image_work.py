@@ -10,6 +10,14 @@ image_router = APIRouter()
 import random
 from classificator import classificator_instance
 from typing import Union
+import json 
+from PIL import Image
+import io
+with open("classes.json") as f:
+    classes_map ={int(k):v for k,v in json.load(f).items()}
+    classes_map.update( {v:k for k,v in classes_map.items()})
+
+
 @image_router.post("/images/")
 async def upload_image(file: UploadFile = File(...),page_url: Union[str, None] = None):
     db = await get_db()
@@ -31,7 +39,10 @@ async def upload_image(file: UploadFile = File(...),page_url: Union[str, None] =
 
         # Store metadata in PostgreSQL
         try:
-            result:dict= classificator_instance.predict_result(file)# model class TODO!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+            im = Image.open(file.file)
+            im = im.convert("RGB")
+            result:dict= classificator_instance.predict_result(im)# model class TODO!!!!!!!!!!!!!!!!!!!!!!!!!!
            
             image_id = await db.fetchval(
                 """
@@ -65,8 +76,10 @@ async def upload_image(file: UploadFile = File(...),page_url: Union[str, None] =
             "id": image_id,
             "filename": file.filename,
             "path": minio_path,
-            **result
-            
+            "class":classes_map[result['class']],# model class TODO!!!!!!!!!!!!!!!!!!!!!!!!!!
+            "page_url":page_url,
+            "embedding":result['embedding'],
+            "probs_class":result['probs_class']
             
             }
 

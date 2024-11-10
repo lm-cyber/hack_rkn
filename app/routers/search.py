@@ -6,6 +6,8 @@ from index import get_minio_client, ensure_bucket_exists
 from fastapi.responses import StreamingResponse
 import io
 search_router = APIRouter()
+from PIL import Image
+import io
 from classificator import classificator_instance
 from typing import Literal
 
@@ -20,6 +22,8 @@ async def get_indexes_by_class(
     distance_type: "cosine","euclidean","manhattan" distance not in class search
     """
     db = await get_db()
+    im = Image.open(file.file)
+    im = im.convert("RGB")                       
     async with await get_minio_client() as minio_client:
         try:
             if distance_type == "cosine":
@@ -30,13 +34,13 @@ async def get_indexes_by_class(
                 operator = '<+>'
 
             if search_by == "class":
-                class_id = classificator_instance(file)
+                class_id = classificator_instance.predict(im)
                 images = await db.fetch("SELECT id , probs FROM images WHERE class_id = $1 order by 2 desc" , class_id)
             elif search_by == "one_shot_embedding":
                 
-                embedding = classificator_instance.predict_embedding(file)
+                embedding = classificator_instance.predict_embedding(im)
                 images = await db.fetch(
-                    f"""SELECT id, 1 - (embedding {operator} '""" + str(embedding) + """'::vector(3)) AS cosine_similarity_embs FROM images order by 2 desc""")
+                    f"""SELECT id, 1 - (embedding {operator} '""" + str(embedding) + """'::vector(106)) AS cosine_similarity_embs FROM images order by 2 desc""")
             if images is None:
                 raise HTTPException(status_code=404, detail="Image not found")
             

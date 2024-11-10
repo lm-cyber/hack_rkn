@@ -18,6 +18,8 @@ from bs4 import BeautifulSoup
 import asyncio
 from playwright.async_api import async_playwright
 from bs4 import BeautifulSoup
+from PIL import Image
+import io
 
 def sanitize_filename(filename: str) -> str:
     sanitized = re.sub(r'[^a-zA-Z0-9_\-\.]', '_', filename)
@@ -61,7 +63,9 @@ async def upload_image(file: UploadFile, content_type: str, page_url: Union[str,
 
 
         try:
-            result: dict = classificator_instance.predict_result(file)  
+            im = Image.open(file.file)
+            im = im.convert("RGB")
+            result: dict = classificator_instance.predict_result(im)  
             image_id = await db.fetchval(
                 """
                 INSERT INTO images (
